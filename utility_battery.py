@@ -50,7 +50,17 @@ class MatFileLoader:
             plt.plot(dataTime, data, label=dataName)    
         plt.xlabel('Time')
         plt.legend(loc='best')
-        
+    def compare_cycle(self, cycleList, dataName):
+#        Visualization of difference of the 'dataName' for different cycles which represent different stage of battery lifetime
+        fig1 = plt.figure()
+        fig1.add_subplot(111)
+        for cycle in cycleList:
+            dataTime = self.get_data(cycle, 'Time')
+            data = self.get_data(cycle, dataName)
+            plt.plot(dataTime,data, label= 'cycle number: '+str(cycle))
+        plt.xlabel('Time')
+        plt.legend(loc='best')
+        plt.title('Comparison of '+dataName)
     def get_data_names(self,cycleNum):
         return self.matData['cycle'][0,0][0,cycleNum]['data'][0,0].dtype.names
     
