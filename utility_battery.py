@@ -10,9 +10,10 @@ Created on Fri May  4 10:26:02 2018
 import scipy.io as sio
 import matplotlib.pyplot as plt
 import numpy as np
+
+from scipy.interpolate import interp1d
 #import pandas as pd
-
-
+         
 class MatFileLoader:
 # The class MatFileLoader is designed to exctract information from the mat file containing the battery test data from NASA. 
 # The mat file is a multilayer structure as described by the annotation below (level 0 to level 3); 
@@ -72,3 +73,25 @@ class MatFileLoader:
         for dataName in dataNameList:
             dic[dataName] = self.get_data(cycleNum, dataName)
         return dic
+    
+    
+    
+class DataPreparationTool:
+
+    def segmentation(self, dataSeries, timeSeries, timeWindow, timeStep, numSegPoints):
+# devide the 1D dataSeries into segments of defined length, and intepolate according to numPoints
+# dataSeries: data to be segmented: y axis data
+# timeSeries: time associated to dataSeries, x axis data
+# timeWindow: the time duration of each segmented piece of data
+# timeStep: the increment in time of each shift of timeWindow towards the end of dataSeries
+# numSegPoints: the number of data points of the evenly sampled data in each segment
+        timeStart = timeSeries[0]
+        timeEnd = timeStart+timeWindow
+        dataList = list()
+        fun_interp = interp1d(timeSeries, dataSeries)
+#        divide the long time sereis data into segments of timeWindow length, and 'timeWindow-timeStep' overlap
+        while(timeEnd < timeSeries[-1]):
+            dataList.append(fun_interp(np.linspace(timeStart,timeEnd, num = numSegPoints)))
+            timeStart = timeStart+timeStep
+            timeEnd = timeStart+timeWindow
+        return dataList
