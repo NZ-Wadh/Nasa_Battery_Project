@@ -16,15 +16,6 @@ import time
 B0005 = ub.MatFileLoader('B0005')
 
 
-
-# charging cycles 
-#numCycles1 = [1,180, 350,471, 613]
-#numCycles1 = [num-1 for num in numCycles1]
-#
-#
-#B0005.compare_cycle(numCycles1, 'Voltage_measured')
-#B0005.compare_cycle(numCycles1, 'Current_measured')
-
 # discharging cycles
 #numCycles2 = [2,98,182, 352,473, 614]
 #numCycles2 = [num-1 for num in numCycles2]
