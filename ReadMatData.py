@@ -17,9 +17,9 @@ B0005 = ub.MatFileLoader('B0005')
 
 
 # discharging cycles
-#numCycles2 = [2,98,182, 352,473, 614]
-#numCycles2 = [num-1 for num in numCycles2]
-#
+numCycles2 = [2,98,182, 352,473, 614]
+numCycles2 = [num-1 for num in numCycles2]
+
 #B0005.compare_cycle(numCycles2, 'Voltage_measured')
 #B0005.compare_cycle(numCycles2, 'Current_measured')
 
@@ -33,5 +33,6 @@ timeSeries = B0005.get_data(1, 'Time')
 timeWindow = 100
 timeStep = 5
 startTime = time.time()
-dataList = ub.DataPreparationTool().segmentation(voltageSeries, timeSeries, timeWindow, timeStep, 10)
-print('Used Time is: ', time.time()-startTime)
+dataTimeDic = ub.DataPreparationTool().segmentation(voltageSeries, timeSeries, timeWindow, timeStep, 10)
+print('Used time is: ', time.time()-startTime)
+ub.DataPreparationTool().illustration([dataTimeDic['data'][2]],[dataTimeDic['time'][2]])

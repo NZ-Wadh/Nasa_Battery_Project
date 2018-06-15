@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from scipy.interpolate import interp1d
+from scipy.integrate import simps
 #import pandas as pd
          
 class MatFileLoader:
@@ -26,7 +27,9 @@ class MatFileLoader:
 #        each struct will be loaded into a 1X1 ndarray first, so need to unpack first
     def __init__(self, fileName):
         self.matData = sio.loadmat(fileName+'.mat')[fileName] # load mat file data into a dic and search for value
-        
+     
+    def get_totalCycle(self):
+        return len(self.matData['cycle'][0,0][0])
     def get_data(self, cycleNum, dataName):
 #       cycle number: the index of cycles to extact(level 2)
 #       dataName: the name of data (Level 3)
@@ -51,6 +54,7 @@ class MatFileLoader:
             plt.plot(dataTime, data, label=dataName)    
         plt.xlabel('Time')
         plt.legend(loc='best')
+        plt.grid()
     def compare_cycle(self, cycleList, dataName):
 #        Visualization of difference of the 'dataName' for different cycles which represent different stage of battery lifetime
         fig1 = plt.figure()
@@ -62,6 +66,7 @@ class MatFileLoader:
         plt.xlabel('Time')
         plt.legend(loc='best')
         plt.title('Comparison of '+dataName)
+        plt.grid()
     def get_data_names(self,cycleNum):
         return self.matData['cycle'][0,0][0,cycleNum]['data'][0,0].dtype.names
     
@@ -88,10 +93,45 @@ class DataPreparationTool:
         timeStart = timeSeries[0]
         timeEnd = timeStart+timeWindow
         dataList = list()
+        timeList = list()
         fun_interp = interp1d(timeSeries, dataSeries)
 #        divide the long time sereis data into segments of timeWindow length, and 'timeWindow-timeStep' overlap
         while(timeEnd < timeSeries[-1]):
+            timeList.append(np.linspace(timeStart,timeEnd, num = numSegPoints))
             dataList.append(fun_interp(np.linspace(timeStart,timeEnd, num = numSegPoints)))
             timeStart = timeStart+timeStep
             timeEnd = timeStart+timeWindow
-        return dataList
+
+        return {'data':dataList, 
+                'time': timeList}
+    def truncate(self,voltageSeries, currentSeries, QSeries, timeSeries):
+        
+# truncate the the last part of the discharge curve where current is zero and the cell voltage rises
+# realized by detecting the turning point
+        indexTurning = [bool(ele>=0) for ele in np.diff(voltageSeries)].index(1)
+        return{'voltage': voltageSeries[0:indexTurning],
+               'current': currentSeries[0:indexTurning],
+               'Q': QSeries[0:indexTurning], 
+               'time': timeSeries[1:indexTurning+1]}
+
+    def dischargeQ(self, currentSeries, timeSeries):
+#         integrated the discharging current cuve to estimate the amount of discharge: conjungate of SoC
+#        current_interp = interp1d(timeSeries, dataSeries)
+        Q = list()
+        Q.append(0)
+        Qlen = len(currentSeries)
+        for x in range(1,Qlen):
+            Q.append(simps(currentSeries[0:x], timeSeries[0:x]))
+        return {'Q':Q, 'time': timeSeries}
+
+    def illustration(self, dataList, timeList):
+        fig1 = plt.figure()
+        fig1.add_subplot(111)
+        for zipped in zip(dataList, timeList):
+            plt.plot(zipped[1], zipped[0])
+        plt.xlabel('Time')
+        plt.ylabel('Voltage V')
+        plt.grid()
+                
+        
+        
