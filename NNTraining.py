@@ -11,28 +11,7 @@ Created on Tue Jun 12 11:38:41 2018
 # data preparation
 import utility_battery as ub
 import matplotlib.pyplot as plt
-#import pandas as pd
-import itertools
 
-##import time
-#def WriteListOfDic2Txt(fileName, cycleNum, volDicList,QDicList):
-#    f = open(fileName, 'a+')
-#    for zippled in zip(volDicList, QDicList):
-#        f.write(str('%d'% cycleNum) + ',')
-#        v2print = zippled[0]['data']
-#        q2print = zippled[1]['data']
-#        for ele in itertools.chain(v2print, q2print[0:-1]):
-#            f.write(str(formatFloat(ele))+ ',')
-#        f.write(str(formatFloat(q2print[-1]))+'\n')
-#    f.close()
-#        
-#
-#def formatFloat(inputNum):
-#    return '%.3f' % inputNum
-
-#def Normalization(valueList, wrtToValue):
-#    for iteree in itertools.chain(valueList):
-#        float(iteree/wrtToValue)
     
 B0005 = ub.MatFileLoader('B0005')
 
