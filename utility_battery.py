@@ -10,6 +10,7 @@ Created on Fri May  4 10:26:02 2018
 import scipy.io as sio
 import matplotlib.pyplot as plt
 import numpy as np
+import itertools
 
 from scipy.interpolate import interp1d
 from scipy.integrate import simps
@@ -146,5 +147,17 @@ class DataPreparationTool:
         plt.ylabel('Voltage V')
         plt.grid()
                 
-        
+    def WriteListOfDic2Txt(self,fileName, cycleNum, volDicList,QDicList):
+        f = open(fileName, 'a+')
+        for zippled in zip(volDicList, QDicList):
+            f.write(str('%d'% cycleNum) + ',')
+            v2print = zippled[0]['data']
+            q2print = zippled[1]['data']
+            for ele in itertools.chain(v2print, q2print[0:-1]):
+                f.write(str(self.formatFloat(ele))+ ',')
+            f.write(str(self.formatFloat(q2print[-1]))+'\n')
+        f.close()
+
+    def formatFloat(self,inputNum):
+        return '%.3f' % inputNum
         
