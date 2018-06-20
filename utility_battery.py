@@ -92,23 +92,36 @@ class DataPreparationTool:
 # numSegPoints: the number of data points of the evenly sampled data in each segment
         timeStart = timeSeries[0]
         timeEnd = timeStart+timeWindow
-        dataList = list()
-        timeList = list()
+#        dataList = list()
+#        timeList = list()
+        dictList = list()
+        
         fun_interp = interp1d(timeSeries, dataSeries)
 #        divide the long time sereis data into segments of timeWindow length, and 'timeWindow-timeStep' overlap
         while(timeEnd < timeSeries[-1]):
-            timeList.append(np.linspace(timeStart,timeEnd, num = numSegPoints))
-            dataList.append(fun_interp(np.linspace(timeStart,timeEnd, num = numSegPoints)))
+            dictOfData = {}
+            dictOfData['time'] = np.linspace(timeStart,timeEnd, num = numSegPoints)
+            dictOfData['data'] = fun_interp(np.linspace(timeStart,timeEnd, num = numSegPoints))
+#            timeList.append(np.linspace(timeStart,timeEnd, num = numSegPoints))
+#            dataList.append(fun_interp(np.linspace(timeStart,timeEnd, num = numSegPoints)))
+            dictList.append(dictOfData)
             timeStart = timeStart+timeStep
             timeEnd = timeStart+timeWindow
 
-        return {'data':dataList, 
-                'time': timeList}
+        return dictList
     def truncate(self,voltageSeries, currentSeries, QSeries, timeSeries):
-        
-# truncate the the last part of the discharge curve where current is zero and the cell voltage rises
+ # truncate the the last part of the discharge curve where current is zero and the cell voltage rises
 # realized by detecting the turning point
-        indexTurning = [bool(ele>=0) for ele in np.diff(voltageSeries)].index(1)
+        changeArray = np.diff(voltageSeries)
+        checkLength = 3
+
+        indexTurning = 0
+        for index in range(len(np.diff(changeArray)-checkLength)):
+            indicator = 0
+            for ele in changeArray[index:index+checkLength]: indicator = indicator + bool(ele>=0)
+            if indicator == 3: 
+                indexTurning  = index 
+                break
         return{'voltage': voltageSeries[0:indexTurning],
                'current': currentSeries[0:indexTurning],
                'Q': QSeries[0:indexTurning], 
