@@ -31,15 +31,19 @@ cycleNumIndex = 1
 numPoints = 10  # number of points per piece of data
 
 #3.prepare to write to txt file 
-fileName = 'B0005.txt'
+fileName = 'B0005.csv'
 f = open(fileName,'w')
 f.write('# data settings: timeWindow = ' + str( timeWindow)+ '# \n')
 f.write('# data settings: timeStep = ' + str( timeStep)+ '# \n')
 f.write('# data settings: numPoints = ' + str( numPoints)+ '# \n')
 f.write('# data settings: \n')
 f.write('# data 0: cycleNumber; data1-'+str(int(numPoints))+': voltage' + ' data'+ str(int(numPoints+1))
-        +'-' + str(int(numPoints+numPoints))+ ': Q discharged \n')      
+        +'-' + str(int(numPoints+numPoints))+ ': Q discharged \n') 
 f.close()
+ub.DataPreparationTool().AppendList2TxtLine(fileName,['cycleNum', 
+                'V0','V1','V2','V3','V4','V5','V6','V7','V8','V9',
+                'Q0','Q1','Q2','Q3','Q4','Q5','Q6','Q7','Q8','Q9'],',')   
+
 fig1 = plt.figure()
 fig1.add_subplot(111)
 

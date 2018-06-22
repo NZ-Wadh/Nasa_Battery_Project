@@ -148,16 +148,18 @@ class DataPreparationTool:
         plt.grid()
                 
     def WriteListOfDic2Txt(self,fileName, cycleNum, volDicList,QDicList):
-        f = open(fileName, 'a+')
+
         for zippled in zip(volDicList, QDicList):
-            f.write(str('%d'% cycleNum) + ',')
             v2print = zippled[0]['data']
             q2print = zippled[1]['data']
-            for ele in itertools.chain(v2print, q2print[0:-1]):
-                f.write(str(self.formatFloat(ele))+ ',')
-            f.write(str(self.formatFloat(q2print[-1]))+'\n')
-        f.close()
+            listOfEle = list(itertools.chain([('%d'% cycleNum)], [self.formatFloat(ele) for ele in v2print], [self.formatFloat(ele) for ele in q2print]))
+            self.AppendList2TxtLine(fileName, listOfEle, ',')
 
+    def AppendList2TxtLine(self, fileName, listOfEle, separator):
+        f = open(fileName, 'a+')
+        for ele in listOfEle[0:-1]:
+            f.write(str(ele)+separator)
+        f.write(listOfEle[-1] + '\n')
     def formatFloat(self,inputNum):
         return '%.3f' % inputNum
         
