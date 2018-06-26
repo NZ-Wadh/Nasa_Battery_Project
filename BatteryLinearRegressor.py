@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Jun 22 14:57:18 2018
+Created on Tue Jun 26 17:25:59 2018
 
 @author: zha200
 """
@@ -37,7 +37,6 @@ print('Shape of training feature train_x is ', train_x.shape)
 print('Shape of testing feature test_x is ', test_x.shape)
 
 # definie linear regression model:
-n_sam = train_x.shape[0]
 n_dim = train_x.shape[1]
 learning_rate = 0.01
 cost_history = np.empty(shape = [1], dtype=float)
